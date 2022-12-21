@@ -45,22 +45,6 @@ import { ConfirmDialogComponent } from './../../components/confirm-dialog/confir
 @UntilDestroy()
 @Component({
   selector: 'app-create-user',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatRadioModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatSelectModule,
-    MatCheckboxModule,
-    MatTooltipModule,
-    ConfirmDialogComponent,
-    // NzModalModule,
-  ],
   templateUrl: './create-user.component.html',
   styleUrls: ['./create-user.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -41,23 +41,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 @UntilDestroy()
 @Component({
   selector: 'app-user',
-  standalone: true,
-  imports: [
-CommonModule,
-    HttpClientModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSortModule,
-    MatTableModule,
-    MatPaginatorModule,
-    MatSelectModule,
-    MatIconModule,
-    MatTooltipModule,
-    FormsModule,
-    ReactiveFormsModule,
-    CreateUserComponent,
-    ConfirmDialogComponent
-  ],
   templateUrl: './user.component.html',
   styleUrls: ['./user.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

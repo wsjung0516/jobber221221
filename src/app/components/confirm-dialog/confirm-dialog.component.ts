@@ -8,8 +8,8 @@ interface Data {
 
 @Component({
   selector: 'app-confirm-dialog',
-  standalone: true,
-  imports: [CommonModule],
+  // standalone: true,
+  // imports: [CommonModule],
   template: `
 <!-- Modal -->
 <div class="overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none justify-center items-center flex">

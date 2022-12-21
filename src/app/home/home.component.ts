@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 @Component({
   selector: 'app-home',
-  standalone: true,
+  // standalone: true,
   template: `
     <div class="container">
       <div class="p-5 mt-3 bg-blue-100 rounded">

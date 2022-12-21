@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { KeycloakService } from 'keycloak-angular';
+import { Router } from '@angular/router';
+import { KeycloakEventType, KeycloakService } from 'keycloak-angular';
 import { KeycloakProfile } from 'keycloak-js';
 
 @Component({
@@ -7,24 +8,37 @@ import { KeycloakProfile } from 'keycloak-js';
   templateUrl: './app.component.html'
 })
 export class AppComponent implements OnInit {
-  public isLoggedIn = false;
+  title = 'angular-app';
+  name: string;
+  isLoggedIn: boolean;
   public userProfile: KeycloakProfile | null = null;
-
-  constructor(private readonly keycloak: KeycloakService) {}
-
-  public async ngOnInit() {
-    this.isLoggedIn = await this.keycloak.isLoggedIn();
+  constructor(private keycloakService: KeycloakService, private router: Router) {
+    console.log('AppComponent constructor');
+  }
+  async ngOnInit() {
+    console.log('AppComponent ngOnInit');
+    // this.refreshKeycloakToken();
+    this.isLoggedIn = await this.keycloakService.isLoggedIn();
 
     if (this.isLoggedIn) {
-      this.userProfile = await this.keycloak.loadUserProfile();
+      this.userProfile = await this.keycloakService.loadUserProfile();
+      this.name = this.userProfile.firstName;
     }
-  }
 
-  public login() {
-    this.keycloak.login();
   }
-
-  public logout() {
-    this.keycloak.logout();
+  refreshKeycloakToken() {
+    this.keycloakService.keycloakEvents$.subscribe({
+      next: (e) => {
+        if (e.type == KeycloakEventType.OnTokenExpired) {
+          this.keycloakService.updateToken(20);
+        }
+      }
+    });  }
+  login() {
+    // this.oauthService.initCodeFlow();
+    this.keycloakService.login();
+  }
+  logout() {
+    this.keycloakService.logout();
   }
 }
