@@ -47,7 +47,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 })
 export class UserComponent implements OnInit {
   displayedColumns: string[] = [
-    'user_id',
+    // 'user_id',
     'first_name',
     'last_name',
     'email',
@@ -61,7 +61,7 @@ export class UserComponent implements OnInit {
     'action',
   ];
   displayedTitle: string[] = [
-    'Id',
+    // 'Id',
     'FirstName',
     'LastName',
     'Email',
@@ -90,7 +90,7 @@ export class UserComponent implements OnInit {
   length = 100;
   disabled = false;
   mode: string;
-  tmpObservable = new Subject();
+  refreshObservable = new Subject();
   oldWhere: any[] = [];
   oldOrderBy: {} = {};
 
@@ -116,7 +116,7 @@ export class UserComponent implements OnInit {
   ngAfterViewInit() {
     // this.dataSource.paginator = this.paginator;
     setTimeout(() => {
-      this.getConditionalUserLength();
+      // this.getConditionalUserLength();
       this.makeSortNWhereCondition().subscribe((data: any) => {
         this.dataSource.sort = this.sort;
         this.dataSource.data = data;
@@ -130,7 +130,7 @@ export class UserComponent implements OnInit {
       // console.log('this.old where, length', this.oldWhere,this.paginator.length);
     })
   }
-  getUser(id: number) {
+  getUser(id: string) {
     this.userService.getUser(id).subscribe((data: any) => {
       console.log(data);
     });
@@ -144,7 +144,7 @@ export class UserComponent implements OnInit {
       },
     }).afterClosed$.subscribe((data: any) => {
       if(data){
-        this.tmpObservable.next({}); // trigger the observable for updating the table}
+        this.refreshObservable.next({}); // trigger the observable for updating the table}
       }
     })
     // console.log('onCreatedUser', this.userForm.value);
@@ -159,7 +159,7 @@ export class UserComponent implements OnInit {
       },
     }).afterClosed$.subscribe((data: any) => {
       if(data){
-        this.tmpObservable.next({}); // trigger the observable for updating the table
+        this.refreshObservable.next({}); // trigger the observable for updating the table
       }
     })
 
@@ -174,7 +174,7 @@ export class UserComponent implements OnInit {
     } ).afterClosed$.subscribe((data: any) => {
       if(data){
         this.userService.deleteUser(user.user_id).subscribe((data: any) => {
-          this.tmpObservable.next({}); // trigger the observable for updating the table
+          this.refreshObservable.next({}); // trigger the observable for updating the table
         })
       }
     })
@@ -223,14 +223,12 @@ export class UserComponent implements OnInit {
     const where$ = this.makeWhereObservable();
       let where: any[] = [];
       let orderBy: {} = null;
-      // this.tmpObservable.pipe(startWith({}))
-    return merge(this.sort.sortChange, this.paginator.page, where$, this.tmpObservable).pipe(
+      // this.refreshObservable.pipe(startWith({}))
+    return merge(this.sort.sortChange, this.paginator.page, where$, this.refreshObservable).pipe(
       untilDestroyed(this),
       skip(1),
       startWith({}),
       switchMap((data: any) => {
-        // console.log('data0', data);
-
         // where event is triggered.
         if (data.where && data.where.length > 0) {
           where = [...this.makeWhereCondition(data.where)]; // make where condition
@@ -248,7 +246,7 @@ export class UserComponent implements OnInit {
           orderBy = {[data.active]: data.direction};
           this.oldOrderBy = orderBy;
         } else {
-          if( this.oldOrderBy){ // if there is old order
+          if( Object.keys(this.oldOrderBy).length > 0){ // if there is old order
             orderBy = this.oldOrderBy; // keep the old order
           } else {
             orderBy = {created_at: 'desc'};
@@ -287,7 +285,7 @@ export class UserComponent implements OnInit {
   }
 }
 export const resetUser: User = {
-  user_id: 1,          // number 1
+  user_id: '1',          // string 1
   first_name: '', // string 'John'
   last_name: '', // string 'John'
   email: '', // string ''

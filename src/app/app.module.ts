@@ -12,6 +12,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { AngularMaterialModule } from './shared/angular-material.module';
 import { UserModule } from './user/user.module';
+import { environment } from './environments/environment';
 
 
 function initializeKeycloak(keycloak: KeycloakService) {
@@ -19,7 +20,8 @@ function initializeKeycloak(keycloak: KeycloakService) {
     keycloak.init({
       config: {
         realm: 'jobber_realm',
-        url: 'https://ec2-44-210-149-20.compute-1.amazonaws.com:8443/auth',
+        url: environment.keycloak.url,
+        // url: 'https://ec2-44-210-149-20.compute-1.amazonaws.com:8443/auth',
         clientId: 'jobber_client'
       },
       initOptions: {
@@ -36,7 +38,7 @@ function initializeKeycloak(keycloak: KeycloakService) {
     LoaderComponent,
   ],
   imports: [
-    CommonModule,
+  CommonModule,
     BrowserModule,
     BrowserAnimationsModule,
     HttpClientModule,

@@ -155,7 +155,7 @@ export class CreateUserComponent implements OnInit, AfterViewInit {
 }
 
 export const sampleUser: User = {
-  user_id: 1, // number 1
+  user_id: '1', // number 1
   first_name: 'John', // string 'John'
   last_name: 'Doe', // string 'Doe'
   email: 'abc@gmail.com', // string ''
