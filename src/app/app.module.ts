@@ -12,17 +12,16 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { AngularMaterialModule } from './shared/angular-material.module';
 import { UserModule } from './user/user.module';
+import { JOBBER_ISSUER, JOBBER_REALM, JOBBER_CLIENT } from './environments/keycloak-parameter';
 import { environment } from './environments/environment';
-
-
 function initializeKeycloak(keycloak: KeycloakService) {
+  console.log('environment.keycloak.url',environment.keycloak.url, JOBBER_ISSUER, JOBBER_REALM, JOBBER_CLIENT)
   return () =>
     keycloak.init({
       config: {
-        realm: 'jobber_realm',
-        url: environment.keycloak.url,
-        // url: 'https://ec2-44-210-149-20.compute-1.amazonaws.com:8443/auth',
-        clientId: 'jobber_client'
+        realm: JOBBER_REALM,
+        url: JOBBER_ISSUER,
+        clientId: JOBBER_CLIENT
       },
       initOptions: {
         onLoad: 'check-sso',
@@ -38,7 +37,7 @@ function initializeKeycloak(keycloak: KeycloakService) {
     LoaderComponent,
   ],
   imports: [
-  CommonModule,
+    CommonModule,
     BrowserModule,
     BrowserAnimationsModule,
     HttpClientModule,

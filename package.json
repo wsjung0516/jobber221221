@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --ssl --ssl-key c:/ssl/namecheap/usul_me2/usul_me.key --ssl-cert c:/ssl/namecheap/usul_me2/usul_me.crt --host usul.me",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
