@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { UserService } from './user.service';
@@ -40,6 +46,21 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSortModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSelectModule,
+    MatIconModule,
+    MatTooltipModule,
+    CreateUserComponent,
+  ],
   selector: 'app-user',
   templateUrl: './user.component.html',
   styleUrls: ['./user.component.css'],
@@ -74,12 +95,7 @@ export class UserComponent implements OnInit {
     // 'Subscribe',
     'Action',
   ];
-  categoryColumns: string[] = [
-    'first_name',
-    'last_name',
-    'email',
-    'zipcode',
-  ];
+  categoryColumns: string[] = ['first_name', 'last_name', 'email', 'zipcode'];
 
   dataSource: MatTableDataSource<User>;
   selectedValue: FormControl;
@@ -121,14 +137,16 @@ export class UserComponent implements OnInit {
         this.dataSource.sort = this.sort;
         this.dataSource.data = data;
         this.getConditionalUserLength();
-      })
-    })
+      });
+    });
   }
   private getConditionalUserLength() {
-    this.userService.getConditionalUserLength(this.oldWhere).subscribe((users: User[]) => {
-      this.paginator.length = users.length;
-      // console.log('this.old where, length', this.oldWhere,this.paginator.length);
-    })
+    this.userService
+      .getConditionalUserLength(this.oldWhere)
+      .subscribe((users: User[]) => {
+        this.paginator.length = users.length;
+        // console.log('this.old where, length', this.oldWhere,this.paginator.length);
+      });
   }
   getUser(id: string) {
     this.userService.getUser(id).subscribe((data: any) => {
@@ -136,95 +154,112 @@ export class UserComponent implements OnInit {
     });
   }
   onCreatedUser() {
-    const dialogRef = this.dialog.open(CreateUserComponent, {
-      data: {
-        user: resetUser,
-        disabled: false,
-        mode: 'Create'
-      },
-    }).afterClosed$.subscribe((data: any) => {
-      if(data){
-        this.refreshObservable.next({}); // trigger the observable for updating the table}
-      }
-    })
+    const dialogRef = this.dialog
+      .open(CreateUserComponent, {
+        data: {
+          user: resetUser,
+          disabled: false,
+          mode: 'Create',
+        },
+      })
+      .afterClosed$.subscribe((data: any) => {
+        if (data) {
+          this.refreshObservable.next({}); // trigger the observable for updating the table}
+        }
+      });
     // console.log('onCreatedUser', this.userForm.value);
   }
   onUpdatedUser(user: User) {
     // this.user.user_id = user.user_id;
-    const dialogRef = this.dialog.open(CreateUserComponent, {
-      data: {
-        user: user,
-        disabled: false,
-        mode: 'Update'
-      },
-    }).afterClosed$.subscribe((data: any) => {
-      if(data){
-        this.refreshObservable.next({}); // trigger the observable for updating the table
-      }
-    })
+    const dialogRef = this.dialog
+      .open(CreateUserComponent, {
+        data: {
+          user: user,
+          disabled: false,
+          mode: 'Update',
+        },
+      })
+      .afterClosed$.subscribe((data: any) => {
+        if (data) {
+          this.refreshObservable.next({}); // trigger the observable for updating the table
+        }
+      });
 
     // this.cdr.detectChanges();
   }
   onDeletedUser(user: User) {
-    this.dialog.open( ConfirmDialogComponent, {
-      data: {
-        title: 'Delete User',
-        message: `Are you sure you want to delete [${user.first_name} ${user.last_name}]?`
-      }
-    } ).afterClosed$.subscribe((data: any) => {
-      if(data){
-        this.userService.deleteUser(user.user_id).subscribe((data: any) => {
-          this.refreshObservable.next({}); // trigger the observable for updating the table
-        })
-      }
-    })
+    this.dialog
+      .open(ConfirmDialogComponent, {
+        data: {
+          title: 'Delete User',
+          message: `Are you sure you want to delete [${user.first_name} ${user.last_name}]?`,
+        },
+      })
+      .afterClosed$.subscribe((data: any) => {
+        if (data) {
+          this.userService.deleteUser(user.user_id).subscribe((data: any) => {
+            this.refreshObservable.next({}); // trigger the observable for updating the table
+          });
+        }
+      });
   }
   onDisplayUser(user: User) {
     const dialogRef = this.dialog.open(CreateUserComponent, {
       data: {
         user: user,
         disabled: true,
-        mode: ''
+        mode: '',
       },
-    })
+    });
   }
   resetSearch() {
     this.oldOrderBy = null;
     this.oldWhere = null;
   }
-  private makeWhereObservable(): Observable<any>{
+  private makeWhereObservable(): Observable<any> {
     let tmpArray: any[] = [];
-    const selectedValue$ = this.userForm.get('selectedValue')
-      .valueChanges.pipe(startWith('first_name'),
-        tap(() => {
-          this.paginator.pageIndex = 0; // reset the page index when the selected value is changed.
-        })
+    const selectedValue$ = this.userForm.get('selectedValue').valueChanges.pipe(
+      startWith('first_name'),
+      tap(() => {
+        this.paginator.pageIndex = 0; // reset the page index when the selected value is changed.
+      })
+    );
+    const searchValue$ = this.userForm
+      .get('searchValue')
+      .valueChanges.pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        startWith('')
       );
-    const searchValue$ = this.userForm.get('searchValue')
-      .valueChanges.pipe(debounceTime(300), distinctUntilChanged(), startWith(''));
-      //
-    const gender$ = this.userForm.get('gender')
+    //
+    const gender$ = this.userForm
+      .get('gender')
       .valueChanges.pipe(startWith('None'));
 
     return combineLatest([selectedValue$, searchValue$, gender$]).pipe(
       untilDestroyed(this),
       map(([selectedValue, searchValue, gender]) => {
         tmpArray = [];
-        if( gender !== 'None') {
+        if (gender !== 'None') {
           tmpArray.push({ gender: gender });
         }
         tmpArray.push({ [selectedValue]: searchValue });
-        return {where:tmpArray};
-      }),
-    )
+        return { where: tmpArray };
+      })
+    );
   }
 
   private makeSortNWhereCondition(): Observable<any> {
     const where$ = this.makeWhereObservable();
-      let where: any[] = [];
-      let orderBy: {} = null;
-      // this.refreshObservable.pipe(startWith({}))
-    return merge(this.sort.sortChange, this.paginator.page, where$, this.refreshObservable).pipe(
+    let where: any[] = [];
+    let orderBy: {} = null;
+    // this.refreshObservable.pipe(startWith({}))
+    return merge(
+      this.sort.sortChange,
+      this.paginator.page,
+      where$,
+      this.refreshObservable
+    ).pipe(
       untilDestroyed(this),
       skip(1),
       startWith({}),
@@ -235,21 +270,23 @@ export class UserComponent implements OnInit {
           this.oldWhere = where;
           // where = {[column]: {contains: value}}
         } else {
-          if( this.oldWhere && this.oldWhere.length > 0){ // if there is old where condition
-            where = this.oldWhere;  // keep the old where condition
+          if (this.oldWhere && this.oldWhere.length > 0) {
+            // if there is old where condition
+            where = this.oldWhere; // keep the old where condition
           } else {
             where = null;
           }
         }
         // sort event is triggered.
-        if( data.active && data.direction){
-          orderBy = {[data.active]: data.direction};
+        if (data.active && data.direction) {
+          orderBy = { [data.active]: data.direction };
           this.oldOrderBy = orderBy;
         } else {
-          if( Object.keys(this.oldOrderBy).length > 0){ // if there is old order
+          if (Object.keys(this.oldOrderBy).length > 0) {
+            // if there is old order
             orderBy = this.oldOrderBy; // keep the old order
           } else {
-            orderBy = {created_at: 'desc'};
+            orderBy = { created_at: 'desc' };
           }
         }
         // console.log ('where, orderBy', where, orderBy);
@@ -257,10 +294,10 @@ export class UserComponent implements OnInit {
           this.paginator.pageIndex * this.paginator.pageSize,
           this.paginator.pageSize,
           orderBy,
-          where,
+          where
         );
-      }),
-    )
+      })
+    );
   }
 
   makeWhereCondition(whereData: any[]) {
@@ -271,21 +308,21 @@ export class UserComponent implements OnInit {
       column.forEach((col, idx) => {
         const value = data[col];
         // console.log('column',  value, idx);
-        if( col === 'gender') {
-          where = { gender: value};
+        if (col === 'gender') {
+          where = { gender: value };
           // where = { gender: {contains: value }};
         } else {
-          where = { [col]: { contains: value }};
+          where = { [col]: { contains: value } };
         }
         whereArray.push(where);
-      })
+      });
     });
     // const where = {[column]: {contains: value}};
     return whereArray;
   }
 }
 export const resetUser: User = {
-  user_id: '1',          // string 1
+  user_id: '1', // string 1
   first_name: '', // string 'John'
   last_name: '', // string 'John'
   email: '', // string ''
@@ -299,5 +336,4 @@ export const resetUser: User = {
   status: '', // string,
   created_at: null, // Date,
   subscribe: null, // boolean,
-
-}
+};

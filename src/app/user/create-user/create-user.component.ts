@@ -32,6 +32,8 @@ import { format } from 'date-fns';
 import { UserService } from '../user.service';
 import { DialogRef, DialogService } from '@ngneat/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
+// import { UserModule } from './../user.module';
+
 import {
   Observable,
 } from 'rxjs';
@@ -44,7 +46,9 @@ interface Data {
 import { ConfirmDialogComponent } from './../../components/confirm-dialog/confirm-dialog.component';
 @UntilDestroy()
 @Component({
-  selector: 'app-create-user',
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, MatRadioModule, MatFormFieldModule, MatInputModule, MatDatepickerModule, MatNativeDateModule, MatSelectModule, MatCheckboxModule, MatTooltipModule],
+selector: 'app-create-user',
   templateUrl: './create-user.component.html',
   styleUrls: ['./create-user.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

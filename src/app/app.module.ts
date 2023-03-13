@@ -47,7 +47,7 @@ function initializeKeycloak(keycloak: KeycloakService) {
     RouterModule,
     KeycloakAngularModule,
     AngularMaterialModule,
-    UserModule
+    // UserModule
   ],
   providers: [
     {
